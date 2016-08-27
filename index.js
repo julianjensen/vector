@@ -26,6 +26,7 @@ const
             return func.call( thisContext, a, b, c, d );
         };
     },
+    iterable = a => a instanceof Map || a instanceof Set || a instanceof WeakMap || a instanceof WeakSet || Array.isArray( a ) || typeof a === 'object',
     LARGE_ARRAY_SIZE = 200;
 
 class Vector extends Array
@@ -512,14 +513,17 @@ class Vector extends Array
         while ( ++index < length )
             if ( !!this[ index ] ) result[ resultIndex++ ] = this[ index ];
 
-        result.length = resultIndex;
+        if ( inPlace ) result.length = resultIndex;
 
         return result;
     }
 
     static from( arg )
     {
-        return Vector.clone( Array.from( arg ) );
+        if ( !iterable( arg ) )
+            return Vector.clone( Array.from( arg ) );
+        else
+            return new Vector().push( arg );
     }
 
     static array( arg )
