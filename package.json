@@ -1,0 +1,36 @@
+{
+    "name": "vector",
+    "version": "1.0.0",
+    "description": "A much faster and versatile array class.",
+    "main": "index.js",
+    "scripts": {
+        "commit": "git commit -aF .tmp",
+        "test": "node --harmony node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha",
+        "preversion": "npm test",
+        "junit": "node --harmony node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -R mocha-junit-reporter",
+        "postjunit": "istanbul report clover",
+        "mddocs": "jsdoc2md index.js lib/**/*.js > ./API.md",
+        "errors": "((jshint ./lib || true) && (jscs ./lib || true))",
+        "checkstyle": "((jshint --reporter=checkstyle ./lib || true) && (jscs --reporter=checkstyle ./lib || true)) | onecs >checkstyle.xml"
+    },
+    "author": {
+        "name": "Julian Jensen",
+        "email": "julian@exploreplanet3.com"
+    },
+    "repository": "http://julian@bitbucket.corp.pvt/scm/srv/vector",
+    "license": "UNLICENSED",
+    "dependencies": {
+    },
+    "devDependencies": {
+        "istanbul": "latest",
+        "chai": "latest",
+        "chai-as-promised": "latest",
+        "mocha": "latest",
+        "mocha-junit-reporter": "latest",
+        "one-checkstyle": "latest",
+        "jshint": "latest",
+        "jscs": "latest",
+        "jscs-jsdoc": "latest",
+        "jsdoc-to-markdown": "latest"
+    }
+}

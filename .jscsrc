@@ -1,0 +1,112 @@
+{
+    "maxErrors": 2000,
+    "disallowSpacesInNamedFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
+    "disallowSpacesInFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
+    "disallowSpacesInAnonymousFunctionExpression": {
+        "beforeOpeningRoundBrace": true
+    },
+    "disallowSpacesInFunctionDeclaration": {
+        "beforeOpeningRoundBrace": true
+    },
+    "requireSpacesInsideArrayBrackets": "all",
+    "requireSpacesInsideObjectBrackets": "all",
+    "requireSpacesInsideBrackets": true,
+    "requireSpacesInsideParentheses": "all",
+    "requireSpacesInsideParenthesizedExpression": {
+        "allExcept": [ "{", "}", "function" ]
+    },
+    "disallowSpaceAfterPrefixUnaryOperators": true,
+    "disallowSpaceBeforePostfixUnaryOperators": true,
+    "disallowSpaceBeforeComma": true,
+    "requireSpaceAfterComma": true,
+    "disallowParenthesesAroundArrowParam": true,
+    "disallowYodaConditions": true,
+    "disallowKeywords": [ "with" ],
+    "disallowMultipleLineStrings": true,
+    "disallowSpaceBeforeSemicolon": true,
+    "requireSpaceBeforeBlockStatements": true,
+    "requireSpacesInConditionalExpression": true,
+    "requireBlocksOnNewline": 1,
+    "requireCommaBeforeLineBreak": true,
+    "requireSpaceBeforeBinaryOperators": true,
+    "requireSpaceAfterBinaryOperators": true,
+    "requireCapitalizedConstructors": true,
+    "requireSpacesInForStatement": true,
+    "requireSpaceBetweenArguments": true,
+    "requireCurlyBraces": [
+        "do"
+    ],
+    "maximumNumberOfLines": 1500,
+    "requireDollarBeforejQueryAssignment": "ignoreProperties",
+    "requireKeywordsOnNewLine": [
+        "else"
+    ],
+    "requireDotNotation": {
+        "allExcept": [
+            "snake_case",
+            "keywords"
+        ]
+    },
+    "requireMultipleVarDecl": "onevar",
+    "requirePaddingNewLineAfterVariableDeclaration": true,
+    "requireSemicolons": true,
+    "requireSpaceBeforeObjectValues": true,
+    "safeContextKeyword": [
+        "that", "_this", "self", "context"
+    ],
+    "validateParameterSeparator": ", ",
+
+    "requireSpacesInAnonymousFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInFunctionDeclaration": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInFunction": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "requireSpacesInNamedFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "jsDoc": {
+        "checkParamTypes": true,
+        "checkParamExistence": true,
+        "checkParamNames": true,
+        "checkRedundantParams": true,
+        "checkReturnTypes": true,
+        "checkRedundantReturns": true,
+        "requireReturnTypes": true,
+        "requireReturnDescription": true,
+        "checkRedundantAccess": true,
+        "leadingUnderscoreAccess": true,
+        "requireNewlineAfterDescription": true,
+        "requireParamDescription": true,
+        "requireCommaBeforeLineBreak": true
+    },
+    "requireSpaceAfterKeywords": [
+        "do",
+        "for",
+        "if",
+        "else",
+        "switch",
+        "case",
+        "try",
+        "catch",
+        "void",
+        "while",
+        "with",
+        "return",
+        "typeof"
+    ],
+  "excludeFiles": [
+    "./esdoc2md.js",
+      "./scratch.js"
+  ]
+}
