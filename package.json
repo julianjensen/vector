@@ -1,6 +1,6 @@
 {
   "name": "vector",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A much faster and versatile array class.",
   "main": "index.js",
   "scripts": {
