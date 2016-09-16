@@ -27,7 +27,6 @@ const
         };
     },
     iterable = a => !!a && typeof a[ Symbol.iterator ] === 'function',
-    // iterable = a => a instanceof Map || a instanceof Set || a instanceof WeakMap || a instanceof WeakSet || Array.isArray( a ) || typeof a === 'object',
     LARGE_ARRAY_SIZE = 200;
 
 class Vector extends Array
