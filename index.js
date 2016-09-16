@@ -432,7 +432,7 @@ class Vector extends Array
         return result;
     }
 
-    uniq()
+    uniq( comparator )
     {
         let index = -1;
 
@@ -440,7 +440,7 @@ class Vector extends Array
             length = this.length,
             result = new Vector();
 
-        if ( length >= LARGE_ARRAY_SIZE )
+        if ( length >= LARGE_ARRAY_SIZE && !comparator )
             return this._setToArray( new Set( this ) );
 
         outer:
@@ -452,7 +452,7 @@ class Vector extends Array
                 let seenIndex = result.length;
 
                 while ( seenIndex-- )
-                    if ( result[ seenIndex ] === value ) continue outer;
+                    if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue outer;
 
                 result[ result.length ] = value;
             }
