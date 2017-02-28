@@ -1,0 +1,556 @@
+/** ****************************************************************************************************
+ *
+ * A much faster and versatile array class.
+ *
+ * File: index.js
+ * @author Julian Jensen <julian@exploreplanet3.com> on 27-AUG-2016
+ * @version 0.0.1
+ * @copyright Planet3, Inc.
+ *******************************************************************************************************/
+'use strict';
+//@formatter:off
+
+const
+    bind = function ( func, thisContext ) {
+        return function ( a ) {
+            return func.call( thisContext, a );
+        };
+    },
+    bind3 = function ( func, thisContext ) {
+        return function ( a, b, c ) {
+            return func.call( thisContext, a, b, c );
+        };
+    },
+    bind4 = function( func, thisContext ) {
+        return function( a, b, c, d ) {
+            return func.call( thisContext, a, b, c, d );
+        };
+    },
+    iterable = a => a instanceof Map || a instanceof Set || a instanceof WeakMap || a instanceof WeakSet || Array.isArray( a ) || typeof a === 'object',
+    LARGE_ARRAY_SIZE = 200;
+
+class Vector
+{
+    constructor( ...args )
+    {
+        if ( args.length === 1 && typeof args[ 0 ] === 'number' )
+            this.__ = new Array( args[ 0 ] );
+        else if ( args.length === 1 && Array.isArray( args[ 0 ] ) )
+            this.__ = args[ 0 ];
+        else if ( args.length )
+            this.__ = args;
+        else
+            this.__ = [];
+    }
+
+    get length()
+    {
+        return this.__.length;
+    }
+
+    set length( l )
+    {
+        this.__.length = l;
+    }
+
+    each( fn, thisContext )
+    {
+        var iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn,
+            index = -1,
+            list = this.__,
+            length = list.length;
+
+        while ( ++index < length )
+            iterator( list[ index ], index, this );
+
+        return this;
+    }
+
+    static each( fn, thisContext )
+    {
+        const
+            that = this,
+            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn;
+
+        return function( arr ) {
+            const
+                length = arr ? arr.length : 0;
+
+            let index = -1;
+
+            while ( ++index < length )
+                iterator( arr[ index ], index, arr );
+
+            return arr;
+        };
+    }
+
+    map( fn, thisContext )
+    {
+        var
+            subject = this.__,
+            length = subject.length,
+            result = new Vector( length ),
+            iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn,
+            i = -1;
+
+        while ( ++i < length )
+            result[ i ] = iterator( subject[ i ], i, subject );
+
+        return result;
+    }
+
+    reduce( fn, initialValue, thisContext )
+    {
+        var list = this.__,
+            length = list.length,
+            iterator = thisContext !== undefined ? bind4(fn, thisContext) : fn,
+            i = 0, result;
+
+        if ( initialValue === undefined )
+        {
+            i = 1;
+            result = list[ 0 ];
+        }
+        else
+            result = initialValue;
+
+        for ( ; i < length; i++ )
+            result = iterator( result, list[ i ], i, this );
+
+        return result;
+    }
+
+    reduceRight( fn, initialValue, thisContext )
+    {
+        var list = this.__,
+            length = list.length,
+            iterator = thisContext !== undefined ? bind4( fn, thisContext ) : fn,
+            i = length - 1, result;
+
+        if ( initialValue === undefined )
+            result = list[ i-- ];
+        else
+            result = initialValue;
+
+        for ( ; i >= 0; i-- )
+            result = iterator( result, list[ i ], i, this );
+
+        return result;
+    }
+
+    concat( ...args )
+    {
+        var length = args.length,
+            arr = new Vector( this.__ ),
+            i = -1,
+            index = this.__.length;
+
+        while ( ++i < length )
+        {
+            let item = args[ i ];
+
+            if ( Array.isArray( item ) )
+            {
+                let childLength = item.length,
+                    j = -1;
+
+                while ( ++j < childLength )
+                    arr[ index + j ] = item[ j ];
+
+                index += childLength;
+            }
+            else
+                arr[ index++ ] = item;
+        }
+
+        return arr;
+    }
+
+    push( ...args )
+    {
+        var length = args.length,
+            list = this.__,
+            index = list.length,
+            i = -1;
+
+        while ( ++i < length )
+            list[ index + i ] = args[ i ];
+
+        return this;
+    }
+
+    clone()
+    {
+        var list = this.__,
+            length = list.length,
+            sliced = new Vector( length ),
+            i = -1;
+
+        while ( ++i < length )
+            sliced[ i ] = list[ i ];
+
+        return sliced;
+    }
+
+    static clone( input )
+    {
+        var length = input.length,
+            sliced = new Vector( length ),
+            i = -1;
+
+        while ( ++i < length )
+            sliced[ i ] = input[ i ];
+
+        return sliced;
+    }
+
+    all( fn, thisContext )
+    {
+        return this.every( fn, thisContext );
+    }
+
+    every( fn, thisContext )
+    {
+        var list = this.__,
+            length = list.length,
+            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn,
+            i = -1;
+
+        while ( ++i < length )
+            if ( !iterator( list[ i ], i, this ) ) return false;
+
+        return true;
+    }
+
+    any( fn, thisContext )
+    {
+        return this.some( fn, thisContext );
+    }
+
+    some( fn, thisContext )
+    {
+        var list = this.__,
+            length = list.length,
+            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn,
+            i = -1;
+
+        while ( ++i < length )
+            if ( iterator( list[ i ], i, this ) ) return true;
+
+        return false;
+    }
+
+    slice( slice, sliceEnd )
+    {
+        var ret = new Vector(),
+            list = this.__,
+            len = list.length;
+
+        if ( len === 0 ) return ret;
+
+        const start = slice < 0 ? Math.max( 0, slice + len ) : slice || 0;
+
+        if ( sliceEnd !== undefined )
+            len = sliceEnd < 0 ? sliceEnd + len : sliceEnd;
+
+        while ( len-- > start )
+            ret[ len - start ] = list[ len ];
+
+        return ret;
+    }
+
+    fill( value, start, end, _dir )
+    {
+        const
+            list = this.__,
+            length = list.length,
+            dir = _dir === undefined ? 0 : +_dir;
+
+        if ( start === undefined ) start = 0;
+        if ( end === undefined ) end = length;
+
+        let i = start - 1;
+
+        if ( dir !== 0 )
+            while ( ++i < end ) {
+                list[ i ] = value;
+                value += dir;
+            }
+        else
+            while ( ++i < end )
+                list[ i ] = value;
+
+        return this;
+    }
+
+    includes( value )
+    {
+        if ( Array.isArray( value ) )
+        {
+            const _includes = bind( this.includes, this );
+
+            return this.some( _includes )
+        }
+
+        return this.indexOf( value ) !== -1;
+    }
+
+    indexOf( target, fromIndex )
+    {
+        var
+            list = this.__,
+            length = list.length,
+            i = 0;
+
+        if ( typeof fromIndex === 'number' )
+        {
+            i = fromIndex;
+            if ( i < 0 )
+            {
+                i += length;
+                if ( i < 0 ) i = 0;
+            }
+        }
+
+        for ( ; i < length; i++ )
+            if ( list[ i ] === target ) return i;
+
+        return -1;
+    }
+
+    lastIndexOf( target, fromIndex )
+    {
+        var list = this.__,
+            length = list.length,
+            i = length - 1;
+
+        if ( typeof fromIndex === 'number' )
+        {
+            i = fromIndex;
+            if ( i < 0 ) i += length;
+        }
+
+        for ( ; i >= 0; i-- )
+            if ( list[ i ] === target ) return i;
+
+        return -1;
+    }
+
+    pluck( field )
+    {
+        var list = this.__,
+            length = list.length,
+            plucked = new Vector(),
+            count = 0, value, i = -1;
+
+        while ( ++i < length )
+        {
+            value = list[ i ];
+
+            if ( typeof value === 'object' && value[ field ] !== undefined )
+            {
+                plucked[ count++ ] = value[ field ];
+            }
+        }
+
+        return plucked;
+    }
+
+    _setToArray( set )
+    {
+        var index = -1,
+            result = new Vector( set.size );
+
+        set.forEach( value => result[ ++index ] = value );
+
+        return result;
+    }
+
+    uniq()
+    {
+        var index = -1,
+            list = this.__,
+            length = list.length,
+            result = new Vector(),
+            value, seenIndex;
+
+        if ( length >= LARGE_ARRAY_SIZE )
+            return this._setToArray( new Set( list ) );
+
+        outer:
+            while ( ++index < length )
+            {
+                value = list[ index ];
+
+                seenIndex = result.length;
+
+                while ( seenIndex-- )
+                    if ( result[ seenIndex ] === value ) continue outer;
+
+                result[ result.length ] = value;
+            }
+
+        return result;
+    }
+
+    flatten()
+    {
+        var
+            list = this.__,
+            length = list.length;
+
+        if ( !length ) return new Vector();
+
+        return Vector._flatten( list );
+    }
+
+    static _flatten( arr, result = new Vector() )
+    {
+        var length = arr.length;
+
+        if ( !length ) return result;
+
+        var index = -1;
+
+        while ( ++index < length )
+        {
+            var value = arr[ index ];
+
+            if ( value instanceof Vector || Array.isArray( value ) )
+                Vector._flatten( value, result );
+            else
+                result[ result.length ] = value;
+        }
+
+        return result;
+    }
+
+    last()
+    {
+        var list = this.__,
+            length = list.length - 1;
+
+        return length === -1 ? undefined : list[ length ];
+    }
+
+    union( ...arrs )
+    {
+        return this.concat( ...arrs ).uniq();
+    }
+
+    intersection( ...arrs )
+    {
+        arrs[ arrs.length ] = this;
+
+        var shortest = 0;
+
+        Vector.each( ( a, i ) => a.length < arrs[ shortest ].length && ( shortest = i ) )( arrs );
+
+        var index = -1,
+            resultIndex = 0,
+            main = arrs[ shortest ],
+            result = new Vector(),
+            length = main.length;
+
+        skip:
+            while ( ++index < length )
+            {
+                let j = -1,
+                    childLength = arrs.length,
+                    value = main[ index ];
+
+                while ( ++j < childLength )
+                {
+                    if ( j !== shortest )
+                    {
+                        if ( !arrs[ j ].includes( value ) ) continue skip;
+                    }
+                }
+
+                result[ resultIndex++ ] = value;
+            }
+
+        return result;
+    }
+
+    equals( arr )
+    {
+        const
+            length = this.length;
+
+        if ( length !== arr.length ) return false;
+
+        const
+            self = this.sort(),
+            other = arr.sort();
+
+        let i = -1;
+
+        while ( ++i < length )
+            if ( self[ i ] !== other[ i ] ) return false;
+
+        return true;
+    }
+
+    [ Symbol.toPrimitive ]( hint )
+    {
+        if ( hint === 'number' ) return this.length;
+        else if ( hint === 'string' ) return '[ ' + this.join( ', ' ) + ' ]';
+
+        return !!this.length;
+    }
+
+    compact( inPlace = false )
+    {
+        const
+            result = inPlace ? this : new Vector(),
+            length = this.length;
+
+        let resultIndex = 0,
+            index = -1;
+
+        while ( ++index < length )
+            if ( !!this[ index ] ) result[ resultIndex++ ] = this[ index ];
+
+        if ( inPlace ) result.length = resultIndex;
+
+        return result;
+    }
+
+    static from( arg )
+    {
+        if ( !iterable( arg ) )
+            return Vector.clone( Array.from( arg ) );
+        else
+            return new Vector().push( arg );
+    }
+
+    static array( arg )
+    {
+        return Array.isArray( arg );
+    }
+
+    static random( count, min = 0, max = 1, float = false )
+    {
+        const
+            a = new Vector( count ),
+            length = count,
+            _min = min < max ? min : max,
+            _max = max > min ? max : min,
+            range = _max - _min + 1;
+
+        let i = -1, val;
+
+        while ( ++i < length )
+        {
+            val = Math.random() * range;
+            if ( !float ) val |= 0;
+            a[ i ] = val + _min;
+        }
+
+        return a;
+    }
+}
+
+module.exports = Vector;
