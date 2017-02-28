@@ -1,30 +1,29 @@
 {
-    "name": "vector",
-    "version": "1.0.0",
-    "description": "A much faster and versatile array class.",
-    "main": "index.js",
-    "scripts": {
-        "test": "istanbul cover _mocha",
-        "mddocs": "jsdoc2md index.js lib/**/*.js > ./API.md"
-    },
-    "author": {
-        "name": "Julian Jensen",
-        "email": "julian@exploreplanet3.com"
-    },
-    "repository": "https://tech.exploreplanet3.com/modules/vector",
-    "license": "UNLICENSED",
-    "dependencies": {
-    },
-    "devDependencies": {
-        "istanbul": "latest",
-        "chai": "latest",
-        "chai-as-promised": "latest",
-        "mocha": "latest",
-        "mocha-junit-reporter": "latest",
-        "one-checkstyle": "latest",
-        "jshint": "latest",
-        "jscs": "latest",
-        "jscs-jsdoc": "latest",
-        "jsdoc-to-markdown": "latest"
-    }
+  "name": "vector",
+  "version": "1.0.1",
+  "description": "A much faster and versatile array class.",
+  "main": "index.js",
+  "scripts": {
+    "test": "istanbul cover _mocha",
+    "mddocs": "jsdoc2md index.js lib/**/*.js > ./API.md"
+  },
+  "author": {
+    "name": "Julian Jensen",
+    "email": "julian@exploreplanet3.com"
+  },
+  "repository": "https://tech.exploreplanet3.com/modules/vector",
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {
+    "istanbul": "latest",
+    "chai": "latest",
+    "chai-as-promised": "latest",
+    "mocha": "latest",
+    "mocha-junit-reporter": "latest",
+    "one-checkstyle": "latest",
+    "jshint": "latest",
+    "jscs": "latest",
+    "jscs-jsdoc": "latest",
+    "jsdoc-to-markdown": "latest"
+  }
 }
