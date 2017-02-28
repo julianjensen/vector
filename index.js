@@ -26,7 +26,7 @@ const
             return func.call( thisContext, a, b, c, d );
         };
     },
-    iterable = a => a instanceof Map || a instanceof Set || a instanceof WeakMap || a instanceof WeakSet || Array.isArray( a ) || typeof a === 'object',
+    iterable = a => !!a && typeof a[ Symbol.iterator ] === 'function',
     LARGE_ARRAY_SIZE = 200;
 
 class Vector extends Array
@@ -34,9 +34,32 @@ class Vector extends Array
     constructor( ...args )
     {
         if ( args.length === 1 && Array.isArray( args[ 0 ] ) )
-            super( ...args[ 0 ] );
+        {
+            const
+                input = args[ 0 ],
+                length = input.length;
+                super( length );
+
+            let i = -1;
+
+            while ( ++i < length )
+                this[ i ] = input[ i ];
+        }
+        else if ( args.length === 1 && typeof args[ 0 ] === 'number' )
+        {
+            super( args[ 0 ] );
+        }
         else if ( args.length )
-            super( ...args );
+        {
+            const
+                length = args.length;
+                super( length );
+
+            let i = -1;
+
+            while ( ++i < length )
+                this[ i ] = args[ i ];
+        }
         else
             super();
     }
@@ -54,20 +77,21 @@ class Vector extends Array
         return this;
     }
 
-    static each( fn, thisContext )
+    static each( fn )
     {
         const
-            that = this,
-            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn;
+            that = this;
 
         return function( arr ) {
+            arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Array.from( arr ) : [ arr ];
+
             const
                 length = arr ? arr.length : 0;
 
             let index = -1;
 
             while ( ++index < length )
-                iterator( arr[ index ], index, arr );
+                fn( arr[ index ], index, arr );
 
             return arr;
         };
@@ -75,19 +99,35 @@ class Vector extends Array
 
     map( fn, thisContext )
     {
-        var
-            subject = this,
-            length = subject.length,
-
+        const
+            length = this.length,
             result = new Vector( length ),
             iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn;
 
-        var i = -1;
+        let i = -1;
 
         while ( ++i < length )
-            result[ i ] = iterator( subject[ i ], i, subject );
+            result[ i ] = iterator( this[ i ], i, this );
 
         return result;
+    }
+
+    static map( fn )
+    {
+        return function( arr ) {
+            arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
+
+            const
+                length = arr.length,
+                result = new Vector( arr.length );
+
+            let index = -1;
+
+            while ( ++index < length )
+                result[ index ] = fn( arr[ index ], index, arr );
+
+            return result;
+        };
     }
 
     reduce( fn, initialValue, thisContext )
@@ -110,6 +150,31 @@ class Vector extends Array
             result = iterator( result, this[ i ], i, this );
 
         return result;
+    }
+
+    static reduce( fn )
+    {
+        return function( arr, initialValue )  {
+            arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
+
+            const
+                length = arr.length;
+
+            let i = 0, result;
+
+            if ( arguments.length === 1 )
+            {
+                i = 1;
+                result = arr[ 0 ];
+            }
+            else
+                result = initialValue;
+
+            for ( ; i < length; i++ )
+                result = fn( result, this[ i ], i, this );
+
+            return result;
+        }
     }
 
     reduceRight( fn, initialValue, thisContext )
@@ -183,7 +248,7 @@ class Vector extends Array
 
     unshift( ...args )
     {
-        this.unshift( ...args );
+        super.unshift( ...args );
 
         return this;
     }
@@ -310,11 +375,10 @@ class Vector extends Array
 
     indexOf( target, fromIndex )
     {
-        var
-            subject = this,
-            length = subject.length;
+        const
+            length = this.length;
 
-        var i = 0;
+        let i = 0;
 
         if ( typeof fromIndex === 'number' )
         {
@@ -327,7 +391,7 @@ class Vector extends Array
         }
 
         for ( ; i < length; i++ )
-            if ( subject[ i ] === target ) return i;
+            if (this[ i ] === target ) return i;
 
         return -1;
     }
@@ -382,7 +446,7 @@ class Vector extends Array
         return result;
     }
 
-    uniq()
+    uniq( comparator )
     {
         let index = -1;
 
@@ -390,7 +454,7 @@ class Vector extends Array
             length = this.length,
             result = new Vector();
 
-        if ( length >= LARGE_ARRAY_SIZE )
+        if ( length >= LARGE_ARRAY_SIZE && !comparator )
             return this._setToArray( new Set( this ) );
 
         outer:
@@ -402,7 +466,7 @@ class Vector extends Array
                 let seenIndex = result.length;
 
                 while ( seenIndex-- )
-                    if ( result[ seenIndex ] === value ) continue outer;
+                    if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue outer;
 
                 result[ result.length ] = value;
             }
@@ -537,7 +601,7 @@ class Vector extends Array
 
     static from( arg )
     {
-        if ( !iterable( arg ) )
+        if ( iterable( arg ) )
             return Vector.clone( Array.from( arg ) );
         else
             return new Vector().push( arg );
@@ -569,5 +633,10 @@ class Vector extends Array
         return a;
     }
 }
+
+Vector.prototype.forEach = Vector.prototype.each;
+Vector.forEach = Vector.each;
+Vector.prototype.any = Vector.prototype.some;
+Vector.prototype.all = Vector.prototype.every;
 
 module.exports = Vector;
