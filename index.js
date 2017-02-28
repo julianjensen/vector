@@ -34,7 +34,7 @@ class Vector extends Array
     constructor( ...args )
     {
         if ( args.length === 1 && Array.isArray( args[ 0 ] ) )
-            super( args[ 0 ] );
+            super( ...args[ 0 ] );
         else if ( args.length )
             super( ...args );
         else
@@ -75,15 +75,17 @@ class Vector extends Array
 
     map( fn, thisContext )
     {
-        const
-            length = this.length,
+        var
+            subject = this,
+            length = subject.length,
+
             result = new Vector( length ),
             iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn;
 
-        let i = -1;
+        var i = -1;
 
         while ( ++i < length )
-            result[ i ] = iterator( this[ i ], i, this );
+            result[ i ] = iterator( subject[ i ], i, subject );
 
         return result;
     }
@@ -168,6 +170,20 @@ class Vector extends Array
 
         while ( ++i < length )
             this[ index + i ] = args[ i ];
+
+        return this;
+    }
+
+    pop()
+    {
+        if ( this.length > 0 ) this.length--;
+
+        return this;
+    }
+
+    unshift( ...args )
+    {
+        this.unshift( ...args );
 
         return this;
     }
@@ -294,10 +310,11 @@ class Vector extends Array
 
     indexOf( target, fromIndex )
     {
-        const
-            length = this.length;
+        var
+            subject = this,
+            length = subject.length;
 
-        let i = 0;
+        var i = 0;
 
         if ( typeof fromIndex === 'number' )
         {
@@ -310,7 +327,7 @@ class Vector extends Array
         }
 
         for ( ; i < length; i++ )
-            if (this[ i ] === target ) return i;
+            if ( subject[ i ] === target ) return i;
 
         return -1;
     }

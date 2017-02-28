@@ -4,20 +4,14 @@
     "description": "A much faster and versatile array class.",
     "main": "index.js",
     "scripts": {
-        "commit": "git commit -aF .tmp",
-        "test": "node --harmony node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha",
-        "preversion": "npm test",
-        "junit": "node --harmony node_modules/istanbul/lib/cli.js cover node_modules/.bin/_mocha -- -R mocha-junit-reporter",
-        "postjunit": "istanbul report clover",
-        "mddocs": "jsdoc2md index.js lib/**/*.js > ./API.md",
-        "errors": "((jshint ./lib || true) && (jscs ./lib || true))",
-        "checkstyle": "((jshint --reporter=checkstyle ./lib || true) && (jscs --reporter=checkstyle ./lib || true)) | onecs >checkstyle.xml"
+        "test": "istanbul cover _mocha",
+        "mddocs": "jsdoc2md index.js lib/**/*.js > ./API.md"
     },
     "author": {
         "name": "Julian Jensen",
         "email": "julian@exploreplanet3.com"
     },
-    "repository": "http://julian@bitbucket.corp.pvt/scm/srv/vector",
+    "repository": "https://tech.exploreplanet3.com/modules/vector",
     "license": "UNLICENSED",
     "dependencies": {
     },
