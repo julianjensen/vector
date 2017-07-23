@@ -10,6 +10,7 @@ const
     expect = require( 'chai' ).expect;
 
 let vec = Vector.random( 100, 0, 10 ),
+    cover = Vector.random( 10, 5, 0 ),
     count, flat, stillFlat, cnt;
 
 do {
@@ -21,9 +22,12 @@ do {
 describe( 'Vector', function() {
 
     it( 'should compact a vector', function() {
-        let comped = vec.compact();
+        let comped = vec.compact(),
+            ip = new Vector( [ 1, 0, 2 ] );
 
         expect( count + comped.length ).to.equal( 100 );
+        ip.compact( true );
+        expect( ip ).to.eql( [ 1, 2 ] );
     } );
 
     it( 'should fill an array', function() {
@@ -174,13 +178,18 @@ describe( 'Vector', function() {
     } );
 
     it( 'should do some logical checks on values', function() {
-        const list = new Vector( 1, 2, 3, 4, 5 );
+        const
+            ctx = { mult: 1 },
+            list = new Vector( 1, 2, 3, 4, 5 );
 
+        expect( list.every( function( v, i ) { return v === i + this.mult; }, ctx ) ).to.be.true;
         expect( list.every( ( v, i ) => v === i + 1 ) ).to.be.true;
+        expect( list.every( ( v, i ) => v === 100 ) ).to.be.false;
         expect( list.all( ( v, i ) => v === i + 1 ) ).to.be.true;
 
-        expect( list.some( ( v, i ) => v === 2 ) ).to.be.true;
-        expect( list.any( ( v, i ) => v === 2 ) ).to.be.true;
+        expect( list.some( function( v ) { return v === this.mult; }, ctx ) ).to.be.true;
+        expect( list.some( v => v === 2 ) ).to.be.true;
+        expect( list.any( v => v === 2 ) ).to.be.true;
     } );
 
     it( "should pluck 'em good, pluck 'em real good", () => {
@@ -251,6 +260,12 @@ describe( 'Vector', function() {
         expect( v.includes( 15 ) ).to.be.false;
         expect( v.includes( [ 5, 15 ] ) ).to.be.true;
         expect( v.includes( [ 15, 16 ] ) ).to.be.false;
+
+        expect( new Vector().pop() ).to.be.undefined;
+        expect( new Vector().last() ).to.be.undefined;
+        expect( new Vector().reduceRight( x => x ) ).to.be.undefined;
+        expect( new Vector( 1, 2, 3 ).intersection( [ 1, 2 ], [ 2 ] ) ).to.eql( [ 2 ] );
+        expect( new Vector( [ 1, 2, 3 ] ).equals( [ 1, 2 ] ) ).to.be.false;
 
     } );
 } );
