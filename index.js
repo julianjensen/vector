@@ -7,28 +7,27 @@
  * @version 0.7.1
  *******************************************************************************************************/
 'use strict';
-//@formatter:off
 
-
-function fill(subject, value, start, end) {
+function fill( subject, value, start, end )
+{
     var length = subject.length,
         i;
-    if (start === undefined) {
+    if ( start === undefined )
         start = 0;
-    }
-    if (end === undefined) {
+
+    if ( end === undefined )
         end = length;
-    }
-    for (i = start; i < end; i++) {
-        subject[i] = value;
-    }
+
+    for ( i = start; i < end; i++ )
+        subject[ i ] = value;
+
     return subject;
 }
 
 function indexOf( subject, target, fromIndex )
 {
     var length = subject.length,
-        i = 0;
+        i      = 0;
 
     if ( typeof fromIndex === 'number' )
     {
@@ -51,7 +50,7 @@ function indexOf( subject, target, fromIndex )
 }
 
 const
-    iterable = a => !!a && typeof a[ Symbol.iterator ] === 'function',
+    iterable         = a => !!a && typeof a[ Symbol.iterator ] === 'function',
     LARGE_ARRAY_SIZE = 200;
 
 class Vector extends Array
@@ -61,9 +60,9 @@ class Vector extends Array
         if ( args.length === 1 && Array.isArray( args[ 0 ] ) )
         {
             const
-                input = args[ 0 ],
+                input  = args[ 0 ],
                 length = input.length;
-                super( length );
+            super( length );
 
             let i = -1;
 
@@ -78,7 +77,7 @@ class Vector extends Array
         {
             const
                 length = args.length;
-                super( length );
+            super( length );
 
             let i = -1;
 
@@ -93,7 +92,7 @@ class Vector extends Array
     {
         const iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
-        let index = -1,
+        let index  = -1,
             length = this.length;
 
         while ( ++index < length )
@@ -125,8 +124,8 @@ class Vector extends Array
     map( fn, thisContext )
     {
         const
-            length = this.length,
-            result = new Vector( length ),
+            length   = this.length,
+            result   = new Vector( length ),
             iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
@@ -158,7 +157,7 @@ class Vector extends Array
     reduce( fn, initialValue, thisContext )
     {
         const
-            length = this.length,
+            length   = this.length,
             iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = 0, result;
@@ -179,7 +178,7 @@ class Vector extends Array
 
     static reduce( fn )
     {
-        return function( arr, initialValue )  {
+        return function( arr, initialValue ) {
             arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
 
             const
@@ -196,22 +195,22 @@ class Vector extends Array
                 result = initialValue;
 
             for ( ; i < length; i++ )
-                result = fn( result, this[ i ], i, this );
+                result = fn( result, arr[ i ], i, arr );
 
             return result;
-        }
+        };
     }
 
     reduceRight( fn, initialValue, thisContext )
     {
         const
-            length = this.length,
+            length   = this.length,
             iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = length - 1, result;
 
         if ( initialValue === undefined )
-            result = this[ i-- ];
+            result = i >= 0 ? this[ i-- ] : undefined;
         else
             result = initialValue;
 
@@ -225,7 +224,7 @@ class Vector extends Array
     {
         const
             length = args.length,
-            arr = Vector.from( this );
+            arr    = Vector.from( this );
 
         let i = -1, index = this.length;
 
@@ -236,7 +235,7 @@ class Vector extends Array
             if ( Array.isArray( item ) )
             {
                 let childLength = item.length,
-                    j = -1;
+                    j           = -1;
 
                 while ( ++j < childLength )
                     arr[ index + j ] = item[ j ];
@@ -256,7 +255,7 @@ class Vector extends Array
             length = args.length;
 
         let index = this.length,
-            i = -1;
+            i     = -1;
 
         while ( ++i < length )
             this[ index + i ] = args[ i ];
@@ -266,14 +265,16 @@ class Vector extends Array
 
     pop()
     {
+        const val = this.length > 0 ? this[ this.length - 1 ] : undefined;
+
         if ( this.length > 0 ) this.length--;
 
-        return this;
+        return val;
     }
 
     unshift( ...args )
     {
-        super.unshift( ...args );
+        this.splice( 0, 0, ...args );
 
         return this;
     }
@@ -306,15 +307,15 @@ class Vector extends Array
         return sliced;
     }
 
-    all( fn, thisContext )
-    {
-        return this.every( fn, thisContext );
-    }
+    // all( fn, thisContext )
+    // {
+    //     return this.every( fn, thisContext );
+    // }
 
     every( fn, thisContext )
     {
         const
-            length = this.length,
+            length   = this.length,
             iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
@@ -325,15 +326,15 @@ class Vector extends Array
         return true;
     }
 
-    any( fn, thisContext )
-    {
-        return this.some( fn, thisContext );
-    }
+    // any( fn, thisContext )
+    // {
+    //     return this.some( fn, thisContext );
+    // }
 
     some( fn, thisContext )
     {
         const
-            length = this.length,
+            length   = this.length,
             iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
@@ -362,6 +363,7 @@ class Vector extends Array
 
         return ret;
     }
+
     // return fill( this, value, start, end );
 
     //
@@ -388,7 +390,7 @@ class Vector extends Array
     fill( value, start, end, _dir )
     {
         var i,
-            arr = this,
+            arr    = this,
             length = arr.length;
 
         if ( !_dir ) return fill( this, value, start, end );
@@ -414,52 +416,53 @@ class Vector extends Array
 
         return this.indexOf( value ) !== -1;
     }
-/*
- const
- length = this.length;
 
- let i = 0;
+    /*
+     const
+     length = this.length;
 
- if ( typeof fromIndex === 'number' )
- {
- i = fromIndex;
- if ( i < 0 )
- {
- i += length;
- if ( i < 0 ) i = 0;
- }
- }
+     let i = 0;
 
- for ( ; i < length; i++ )
- if (this[ i ] === target ) return i;
+     if ( typeof fromIndex === 'number' )
+     {
+     i = fromIndex;
+     if ( i < 0 )
+     {
+     i += length;
+     if ( i < 0 ) i = 0;
+     }
+     }
 
- return -1;
+     for ( ; i < length; i++ )
+     if (this[ i ] === target ) return i;
+
+     return -1;
 
 
- var subject = this,
- length = subject.length,
- i = 0;
+     var subject = this,
+     length = subject.length,
+     i = 0;
 
- if ( typeof fromIndex === 'number' )
- {
- i = fromIndex;
+     if ( typeof fromIndex === 'number' )
+     {
+     i = fromIndex;
 
- if ( i < 0 )
- {
- i += length;
- if ( i < 0 ) i = 0;
- }
- }
+     if ( i < 0 )
+     {
+     i += length;
+     if ( i < 0 ) i = 0;
+     }
+     }
 
- for ( ; i < length; i++ )
- {
- if ( subject[ i ] === target )
- return i;
- }
+     for ( ; i < length; i++ )
+     {
+     if ( subject[ i ] === target )
+     return i;
+     }
 
- return -1;
+     return -1;
 
- */
+     */
     indexOf( target, fromIndex )
     {
         return indexOf( this, target, fromIndex );
@@ -484,10 +487,10 @@ class Vector extends Array
         return -1;
     }
 
-    pluck( field )
+    pluck( ...fields )
     {
         const
-            length = this.length,
+            length  = this.length,
             plucked = new Vector();
 
         let count = 0, value, i = -1;
@@ -496,9 +499,9 @@ class Vector extends Array
         {
             value = this[ i ];
 
-            if ( typeof value === 'object' && value[ field ] !== undefined )
+            if ( typeof value === 'object' && !!value && !Array.isArray( value ) )
             {
-                plucked[ count++ ] = value[ field ];
+                plucked[ count++ ] = fields.length === 1 ? value[ fields[ 0 ] ] : fields.map( f => value[ f ] );
             }
         }
 
@@ -507,7 +510,7 @@ class Vector extends Array
 
     _setToArray( set )
     {
-        let index = -1,
+        let index  = -1,
             result = new Vector( set.size );
 
         set.forEach( value => result[ ++index ] = value );
@@ -543,17 +546,17 @@ class Vector extends Array
         return result;
     }
 
-    flatten()
+    flatten( deep = true )
     {
         const
             length = this.length;
 
         if ( !length ) return new Vector();
 
-        return Vector._flatten( this );
+        return Vector._flatten( this, deep );
     }
 
-    static _flatten( arr, result = new Vector() )
+    static _flatten( arr, deep = true, result = new Vector() )
     {
         const
             length = arr.length;
@@ -567,7 +570,12 @@ class Vector extends Array
             let value = arr[ index ];
 
             if ( value instanceof Vector || Array.isArray( value ) )
-                Vector._flatten( value, result );
+            {
+                if ( deep )
+                    Vector._flatten( value, deep, result );
+                else
+                    result.push( ...value );
+            }
             else
                 result[ result.length ] = value;
         }
@@ -595,9 +603,9 @@ class Vector extends Array
 
         Vector.each( ( a, i ) => a.length < arrs[ shortest ].length && ( shortest = i ) )( arrs );
 
-        let index = -1,
+        let index       = -1,
             resultIndex = 0,
-            main = arrs[ shortest ];
+            main        = arrs[ shortest ];
 
         const
             result = new Vector(),
@@ -606,9 +614,9 @@ class Vector extends Array
         skip:
             while ( ++index < length )
             {
-                let j = -1,
+                let j           = -1,
                     childLength = arrs.length,
-                    value = main[ index ];
+                    value       = main[ index ];
 
                 while ( ++j < childLength )
                 {
@@ -632,7 +640,7 @@ class Vector extends Array
         if ( length !== arr.length ) return false;
 
         const
-            self = this.sort(),
+            self  = this.sort(),
             other = arr.sort();
 
         let i = -1;
@@ -658,7 +666,7 @@ class Vector extends Array
             length = this.length;
 
         let resultIndex = 0,
-            index = -1;
+            index       = -1;
 
         while ( ++index < length )
             if ( !!this[ index ] ) result[ resultIndex++ ] = this[ index ];
@@ -684,11 +692,11 @@ class Vector extends Array
     static random( count, min = 0, max = 1, float = false )
     {
         const
-            a = new Vector( count ),
+            a      = new Vector( count ),
             length = count,
-            _min = min < max ? min : max,
-            _max = max > min ? max : min,
-            range = _max - _min + 1;
+            _min   = min < max ? min : max,
+            _max   = max > min ? max : min,
+            range  = _max - _min + 1;
 
         let i = -1, val;
 

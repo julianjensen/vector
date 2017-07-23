@@ -84,14 +84,26 @@ describe( 'proto overrides', function() {
                 { first: 'one', last: 'three' }
             ];
 
-        expect( test.pluck( 'first' ) ).to.eql( [ { first: 'one' }, { first: 'one' }, { first: 'one' }, { first: 'one' } ] );
-        expect( test.pluck( 'first', 'last' ) ).to.eql( [ { first: 'one', last: 'three' }, { first: 'one', last: 'three' }, { first: 'one', last: 'three' }, { first: 'one', last: 'three' } ] );
-        expect( test.pluck( 'first', 'second' ) ).to.eql( [ { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: undefined } ] );
+        expect( test.pluck( 'first' ) ).to.eql( [ 'one', 'one', 'one', 'one' ] );
+        expect( test.pluck( 'first', 'last' ) ).to.eql( [ [ 'one', 'three' ], [ 'one', 'three' ], [ 'one', 'three' ], [ 'one', 'three' ] ] );
+        expect( test.pluck( 'first', 'second' ) ).to.eql( [ [ 'one', 'two' ], [ 'one', 'two' ], [ 'one', 'two' ], [ 'one', undefined ] ] );
+        // expect( test.pluck( 'first' ) ).to.eql( [ { first: 'one' }, { first: 'one' }, { first: 'one' }, { first: 'one' } ] );
+        // expect( test.pluck( 'first', 'last' ) ).to.eql( [ { first: 'one', last: 'three' }, { first: 'one', last: 'three' }, { first: 'one', last: 'three' }, { first: 'one', last: 'three' } ] );
+        // expect( test.pluck( 'first', 'second' ) ).to.eql( [ { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: undefined } ] );
     } );
 
     it( 'should force unique and flat values', () => {
         const test = [ 1, 2, 3, 4, 3, 5, 5 ],
-            nested = [ 1, 2, [ 3, [ 4, 5 ], 6 ], 7 ];
+            nested = [ 1, 2, [ 3, [ 4, 5 ], 6 ], 7 ],
+            big = [];
+
+        for ( let n = 0; n < 400; n++ )
+            big[ n ] = n;
+
+        big[ 399 ] = 1;
+
+        expect( big ).to.have.length( 400 );
+        expect( big.uniq() ).to.have.length( 399 );
 
         expect( test.uniq() ).to.eql( [ 1, 2, 3, 4, 5 ] );
         expect( nested.flatten() ).to.eql( [ 1, 2, 3, 4, 5, 6, 7 ] );

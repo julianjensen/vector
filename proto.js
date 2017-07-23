@@ -70,10 +70,10 @@ Array.range = function( start, end, step = 1 ) {
     return result;
 };
 
-const toObj = ( obj, field, value ) => ( obj[ field ] = value, obj );
-
 proto.pluck = function( ...fields ) {
-    return this.map( el => !el || typeof el !== 'object' || Array.isArray( el ) ? {} : fields.reduce( ( obj, field ) => toObj( obj, field, el[ field ] ), {} ) );
+    let plucker = fields.length === 1 ? val => val : ( val, arr ) => arr.append( val );
+
+    return this.map( el => !el || typeof el !== 'object' || Array.isArray( el ) ? [] : fields.reduce( ( arr, field ) => plucker( el[ field ], arr ), [] ) );
 };
 
 proto.uniq = function( comparator ) {
@@ -84,7 +84,7 @@ proto.uniq = function( comparator ) {
         result = [];
 
     if ( length >= LARGE_ARRAY_SIZE && !comparator )
-        return this.from( new Set( this ) );
+        return Array.from( new Set( this ) );
 
     let seenIndex;
 
