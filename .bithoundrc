@@ -1,0 +1,8 @@
+{
+    "critics": {
+        "lint": {
+            "engine": "eslint",
+            "wc": 5000
+        }
+    }
+}
