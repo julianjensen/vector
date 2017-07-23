@@ -160,12 +160,7 @@ proto.intersection = function( ...arrs ) {
                 value       = main[ index ];
 
             while ( ++j < childLength )
-            {
-                if ( j !== shortest )
-                {
-                    if ( !arrs[ j ].includes( value ) ) continue skip;
-                }
-            }
+                if ( j !== shortest && !arrs[ j ].includes( value ) ) continue skip;
 
             result[ resultIndex++ ] = value;
         }
