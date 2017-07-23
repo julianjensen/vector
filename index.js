@@ -3,29 +3,54 @@
  * A much faster and versatile array class.
  *
  * File: index.js
- * @author Julian Jensen <julian@exploreplanet3.com> on 27-AUG-2016
- * @version 0.0.1
- * @copyright Planet3, Inc.
+ * @author Julian Jensen <jjdanois@gmail.com> on 27-AUG-2016
+ * @version 0.7.1
  *******************************************************************************************************/
 'use strict';
 //@formatter:off
 
+
+function fill(subject, value, start, end) {
+    var length = subject.length,
+        i;
+    if (start === undefined) {
+        start = 0;
+    }
+    if (end === undefined) {
+        end = length;
+    }
+    for (i = start; i < end; i++) {
+        subject[i] = value;
+    }
+    return subject;
+}
+
+function indexOf( subject, target, fromIndex )
+{
+    var length = subject.length,
+        i = 0;
+
+    if ( typeof fromIndex === 'number' )
+    {
+        i = fromIndex;
+
+        if ( i < 0 )
+        {
+            i += length;
+            if ( i < 0 ) i = 0;
+        }
+    }
+
+    for ( ; i < length; i++ )
+    {
+        if ( subject[ i ] === target )
+            return i;
+    }
+
+    return -1;
+}
+
 const
-    bind = function ( func, thisContext ) {
-        return function ( a ) {
-            return func.call( thisContext, a );
-        };
-    },
-    bind3 = function ( func, thisContext ) {
-        return function ( a, b, c ) {
-            return func.call( thisContext, a, b, c );
-        };
-    },
-    bind4 = function( func, thisContext ) {
-        return function( a, b, c, d ) {
-            return func.call( thisContext, a, b, c, d );
-        };
-    },
     iterable = a => !!a && typeof a[ Symbol.iterator ] === 'function',
     LARGE_ARRAY_SIZE = 200;
 
@@ -66,7 +91,7 @@ class Vector extends Array
 
     each( fn, thisContext )
     {
-        const iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn;
+        const iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let index = -1,
             length = this.length;
@@ -102,7 +127,7 @@ class Vector extends Array
         const
             length = this.length,
             result = new Vector( length ),
-            iterator = thisContext !== undefined ? bind3(fn, thisContext) : fn;
+            iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
 
@@ -134,7 +159,7 @@ class Vector extends Array
     {
         const
             length = this.length,
-            iterator = thisContext !== undefined ? bind4(fn, thisContext) : fn;
+            iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = 0, result;
 
@@ -181,7 +206,7 @@ class Vector extends Array
     {
         const
             length = this.length,
-            iterator = thisContext !== undefined ? bind4( fn, thisContext ) : fn;
+            iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = length - 1, result;
 
@@ -239,6 +264,20 @@ class Vector extends Array
         return this;
     }
 
+    pop()
+    {
+        if ( this.length > 0 ) this.length--;
+
+        return this;
+    }
+
+    unshift( ...args )
+    {
+        super.unshift( ...args );
+
+        return this;
+    }
+
     clone()
     {
         const
@@ -276,7 +315,7 @@ class Vector extends Array
     {
         const
             length = this.length,
-            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn;
+            iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
 
@@ -295,7 +334,7 @@ class Vector extends Array
     {
         const
             length = this.length,
-            iterator = thisContext !== undefined ? bind3( fn, thisContext ) : fn;
+            iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
 
         let i = -1;
 
@@ -323,26 +362,43 @@ class Vector extends Array
 
         return ret;
     }
+    // return fill( this, value, start, end );
+
+    //
+    // const
+    //     length = this.length,
+    //     dir = _dir === undefined ? 0 : +_dir;
+    //
+    // if ( start === undefined ) start = 0;
+    // if ( end === undefined ) end = length;
+    //
+    // let i = start - 1;
+    //
+    // if ( dir !== 0 )
+    //     while ( ++i < end ) {
+    //         this[ i ] = value;
+    //         value += dir;
+    //     }
+    // else
+    //     while ( ++i < end )
+    //         this[ i ] = value;
+    //
+    // return this;
 
     fill( value, start, end, _dir )
     {
-        const
-            length = this.length,
-            dir = _dir === undefined ? 0 : +_dir;
+        var i,
+            arr = this,
+            length = arr.length;
+
+        if ( !_dir ) return fill( this, value, start, end );
 
         if ( start === undefined ) start = 0;
+
         if ( end === undefined ) end = length;
 
-        let i = start - 1;
-
-        if ( dir !== 0 )
-            while ( ++i < end ) {
-                this[ i ] = value;
-                value += dir;
-            }
-        else
-            while ( ++i < end )
-                this[ i ] = value;
+        for ( i = start; i < end; i++, value += _dir )
+            arr[ i ] = value;
 
         return this;
     }
@@ -351,35 +407,62 @@ class Vector extends Array
     {
         if ( Array.isArray( value ) )
         {
-            const _includes = bind( this.includes, this );
+            const _includes = this.includes.bind( this );
 
             return this.some( _includes )
         }
 
         return this.indexOf( value ) !== -1;
     }
+/*
+ const
+ length = this.length;
 
+ let i = 0;
+
+ if ( typeof fromIndex === 'number' )
+ {
+ i = fromIndex;
+ if ( i < 0 )
+ {
+ i += length;
+ if ( i < 0 ) i = 0;
+ }
+ }
+
+ for ( ; i < length; i++ )
+ if (this[ i ] === target ) return i;
+
+ return -1;
+
+
+ var subject = this,
+ length = subject.length,
+ i = 0;
+
+ if ( typeof fromIndex === 'number' )
+ {
+ i = fromIndex;
+
+ if ( i < 0 )
+ {
+ i += length;
+ if ( i < 0 ) i = 0;
+ }
+ }
+
+ for ( ; i < length; i++ )
+ {
+ if ( subject[ i ] === target )
+ return i;
+ }
+
+ return -1;
+
+ */
     indexOf( target, fromIndex )
     {
-        const
-            length = this.length;
-
-        let i = 0;
-
-        if ( typeof fromIndex === 'number' )
-        {
-            i = fromIndex;
-            if ( i < 0 )
-            {
-                i += length;
-                if ( i < 0 ) i = 0;
-            }
-        }
-
-        for ( ; i < length; i++ )
-            if (this[ i ] === target ) return i;
-
-        return -1;
+        return indexOf( this, target, fromIndex );
     }
 
     lastIndexOf( target, fromIndex )
@@ -617,6 +700,11 @@ class Vector extends Array
         }
 
         return a;
+    }
+
+    static override()
+    {
+        require( './proto' );
     }
 }
 

@@ -1,10 +1,9 @@
 /** ****************************************************************************************************
  * File: index-test.js
- * @author Julian Jensen <julian@exploreplanet3.com> on 27-AUG-2016
+ * @author Julian Jensen <jjdanois@gmail.com> on 27-AUG-2016
  * @version 0.0.1
  *******************************************************************************************************/
 'use strict';
-//@formatter:off
 
 const
     Vector = require( '../' ),
@@ -75,12 +74,12 @@ describe( 'Vector', function() {
     it( 'should fill vectors with a range', function() {
         let cmp = new Vector( 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 );
 
-        cnt = new Vector().fill( 10, 0, 10, 1 ),
+        cnt = new Vector().fill( 10, 0, 10, 1 );
 
         expect( cnt ).to.eql( cmp );
     } );
 
     it( 'should retrieve the last value', function() {
-        expect( cnt.last() ).to.equal( 19 );
+        expect( cnt.last() ).to.equal( cnt[ cnt.length - 1 ] );
     } );
 } );
