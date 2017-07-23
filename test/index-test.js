@@ -44,7 +44,7 @@ describe( 'Vector', function() {
 
         vec.each( val => sum += val );
 
-        expect( sum ).to.equal( vec.reduce( ( acc, val ) => acc + val, 0 ) );
+        expect( sum ).to.equal( recd );
     } );
 
     it( 'should flatten a vector', function() {

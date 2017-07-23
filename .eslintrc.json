@@ -146,13 +146,7 @@
         "no-irregular-whitespace": "off",
         "no-iterator": 2,
         "no-label-var": 2,
-        "no-labels": [
-            2,
-            {
-                "allowLoop": false,
-                "allowSwitch": false
-            }
-        ],
+        "no-labels": "off",
         "no-lone-blocks": 2,
         "no-mixed-spaces-and-tabs": 2,
         "no-multi-spaces": "off",

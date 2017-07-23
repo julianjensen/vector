@@ -88,18 +88,19 @@ proto.uniq = function( comparator ) {
 
     let seenIndex;
 
-    while ( ++index < length )
-    {
-        const
-            value = this[ index ];
+    skip:
+        while ( ++index < length )
+        {
+            const
+                value = this[ index ];
 
-        seenIndex = result.length;
+            seenIndex = result.length;
 
-        while ( seenIndex-- )
-            if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue;
+            while ( seenIndex-- )
+                if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue skip;
 
-        result[ result.length ] = value;
-    }
+            result[ result.length ] = value;
+        }
 
     return result;
 };
@@ -151,22 +152,23 @@ proto.intersection = function( ...arrs ) {
         result = [],
         length = main.length;
 
-    while ( ++index < length )
-    {
-        let j           = -1,
-            childLength = arrs.length,
-            value       = main[ index ];
-
-        while ( ++j < childLength )
+    skip:
+        while ( ++index < length )
         {
-            if ( j !== shortest )
-            {
-                if ( !arrs[ j ].includes( value ) ) continue;
-            }
-        }
+            let j           = -1,
+                childLength = arrs.length,
+                value       = main[ index ];
 
-        result[ resultIndex++ ] = value;
-    }
+            while ( ++j < childLength )
+            {
+                if ( j !== shortest )
+                {
+                    if ( !arrs[ j ].includes( value ) ) continue skip;
+                }
+            }
+
+            result[ resultIndex++ ] = value;
+        }
 
     return result;
 };

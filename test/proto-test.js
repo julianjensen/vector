@@ -89,7 +89,7 @@ describe( 'proto overrides', function() {
         expect( test.pluck( 'first', 'second' ) ).to.eql( [ { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: 'two' }, { first: 'one', second: undefined } ] );
     } );
 
-    it( 'should force unique and falt values', () => {
+    it( 'should force unique and flat values', () => {
         const test = [ 1, 2, 3, 4, 3, 5, 5 ],
             nested = [ 1, 2, [ 3, [ 4, 5 ], 6 ], 7 ];
 
