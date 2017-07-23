@@ -8,6 +8,13 @@
  *******************************************************************************************************/
 'use strict';
 
+/**
+ * @param subject
+ * @param value
+ * @param start
+ * @param end
+ * @return {*}
+ */
 function fill( subject, value, start, end )
 {
     var length = subject.length,
@@ -24,6 +31,12 @@ function fill( subject, value, start, end )
     return subject;
 }
 
+/**
+ * @param subject
+ * @param target
+ * @param fromIndex
+ * @return {number}
+ */
 function indexOf( subject, target, fromIndex )
 {
     var length = subject.length,
@@ -53,8 +66,12 @@ const
     iterable         = a => !!a && typeof a[ Symbol.iterator ] === 'function',
     LARGE_ARRAY_SIZE = 200;
 
+/** */
 class Vector extends Array
 {
+    /**
+     * @param args
+     */
     constructor( ...args )
     {
         if ( args.length === 1 && Array.isArray( args[ 0 ] ) )
@@ -70,9 +87,7 @@ class Vector extends Array
                 this[ i ] = input[ i ];
         }
         else if ( args.length === 1 && typeof args[ 0 ] === 'number' )
-        {
             super( args[ 0 ] );
-        }
         else if ( args.length )
         {
             const
@@ -88,6 +103,11 @@ class Vector extends Array
             super();
     }
 
+    /**
+     * @param fn
+     * @param thisContext
+     * @return {Vector}
+     */
     each( fn, thisContext )
     {
         const iterator = thisContext !== undefined ? fn.bind( thisContext ) : fn;
@@ -101,11 +121,12 @@ class Vector extends Array
         return this;
     }
 
+    /**
+     * @param fn
+     * @return {Function}
+     */
     static each( fn )
     {
-        const
-            that = this;
-
         return function( arr ) {
             arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Array.from( arr ) : [ arr ];
 
@@ -121,6 +142,11 @@ class Vector extends Array
         };
     }
 
+    /**
+     * @param fn
+     * @param thisContext
+     * @return {Vector}
+     */
     map( fn, thisContext )
     {
         const
@@ -136,6 +162,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param fn
+     * @return {Function}
+     */
     static map( fn )
     {
         return function( arr ) {
@@ -154,6 +184,12 @@ class Vector extends Array
         };
     }
 
+    /**
+     * @param fn
+     * @param initialValue
+     * @param thisContext
+     * @return {*}
+     */
     reduce( fn, initialValue, thisContext )
     {
         const
@@ -176,6 +212,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param fn
+     * @return {Function}
+     */
     static reduce( fn )
     {
         return function( arr, initialValue ) {
@@ -201,6 +241,12 @@ class Vector extends Array
         };
     }
 
+    /**
+     * @param fn
+     * @param initialValue
+     * @param thisContext
+     * @return {*}
+     */
     reduceRight( fn, initialValue, thisContext )
     {
         const
@@ -220,6 +266,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param args
+     * @return {*}
+     */
     concat( ...args )
     {
         const
@@ -249,6 +299,10 @@ class Vector extends Array
         return arr;
     }
 
+    /**
+     * @param args
+     * @return {Vector}
+     */
     push( ...args )
     {
         const
@@ -263,6 +317,9 @@ class Vector extends Array
         return this;
     }
 
+    /**
+     * @return {*}
+     */
     pop()
     {
         const val = this.length > 0 ? this[ this.length - 1 ] : undefined;
@@ -272,6 +329,10 @@ class Vector extends Array
         return val;
     }
 
+    /**
+     * @param args
+     * @return {Vector}
+     */
     unshift( ...args )
     {
         this.splice( 0, 0, ...args );
@@ -279,6 +340,9 @@ class Vector extends Array
         return this;
     }
 
+    /**
+     * @return {Vector}
+     */
     clone()
     {
         const
@@ -293,6 +357,10 @@ class Vector extends Array
         return sliced;
     }
 
+    /**
+     * @param input
+     * @return {Vector}
+     */
     static clone( input )
     {
         const
@@ -307,11 +375,11 @@ class Vector extends Array
         return sliced;
     }
 
-    // all( fn, thisContext )
-    // {
-    //     return this.every( fn, thisContext );
-    // }
-
+    /**
+     * @param fn
+     * @param thisContext
+     * @return {boolean}
+     */
     every( fn, thisContext )
     {
         const
@@ -326,11 +394,11 @@ class Vector extends Array
         return true;
     }
 
-    // any( fn, thisContext )
-    // {
-    //     return this.some( fn, thisContext );
-    // }
-
+    /**
+     * @param fn
+     * @param thisContext
+     * @return {boolean}
+     */
     some( fn, thisContext )
     {
         const
@@ -345,6 +413,11 @@ class Vector extends Array
         return false;
     }
 
+    /**
+     * @param slice
+     * @param sliceEnd
+     * @return {Vector}
+     */
     slice( slice, sliceEnd )
     {
         const ret = new Vector();
@@ -364,29 +437,13 @@ class Vector extends Array
         return ret;
     }
 
-    // return fill( this, value, start, end );
-
-    //
-    // const
-    //     length = this.length,
-    //     dir = _dir === undefined ? 0 : +_dir;
-    //
-    // if ( start === undefined ) start = 0;
-    // if ( end === undefined ) end = length;
-    //
-    // let i = start - 1;
-    //
-    // if ( dir !== 0 )
-    //     while ( ++i < end ) {
-    //         this[ i ] = value;
-    //         value += dir;
-    //     }
-    // else
-    //     while ( ++i < end )
-    //         this[ i ] = value;
-    //
-    // return this;
-
+    /**
+     * @param value
+     * @param start
+     * @param end
+     * @param _dir
+     * @return {*}
+     */
     fill( value, start, end, _dir )
     {
         var i,
@@ -405,69 +462,37 @@ class Vector extends Array
         return this;
     }
 
+    /**
+     * @param value
+     * @return {boolean}
+     */
     includes( value )
     {
         if ( Array.isArray( value ) )
         {
             const _includes = this.includes.bind( this );
 
-            return this.some( _includes )
+            return this.some( _includes );
         }
 
         return this.indexOf( value ) !== -1;
     }
 
-    /*
-     const
-     length = this.length;
-
-     let i = 0;
-
-     if ( typeof fromIndex === 'number' )
-     {
-     i = fromIndex;
-     if ( i < 0 )
-     {
-     i += length;
-     if ( i < 0 ) i = 0;
-     }
-     }
-
-     for ( ; i < length; i++ )
-     if (this[ i ] === target ) return i;
-
-     return -1;
-
-
-     var subject = this,
-     length = subject.length,
-     i = 0;
-
-     if ( typeof fromIndex === 'number' )
-     {
-     i = fromIndex;
-
-     if ( i < 0 )
-     {
-     i += length;
-     if ( i < 0 ) i = 0;
-     }
-     }
-
-     for ( ; i < length; i++ )
-     {
-     if ( subject[ i ] === target )
-     return i;
-     }
-
-     return -1;
-
+    /**
+     * @param target
+     * @param fromIndex
+     * @return {number}
      */
     indexOf( target, fromIndex )
     {
         return indexOf( this, target, fromIndex );
     }
 
+    /**
+     * @param target
+     * @param fromIndex
+     * @return {number}
+     */
     lastIndexOf( target, fromIndex )
     {
         const
@@ -487,6 +512,10 @@ class Vector extends Array
         return -1;
     }
 
+    /**
+     * @param fields
+     * @return {Vector}
+     */
     pluck( ...fields )
     {
         const
@@ -500,14 +529,17 @@ class Vector extends Array
             value = this[ i ];
 
             if ( typeof value === 'object' && !!value && !Array.isArray( value ) )
-            {
                 plucked[ count++ ] = fields.length === 1 ? value[ fields[ 0 ] ] : fields.map( f => value[ f ] );
-            }
         }
 
         return plucked;
     }
 
+    /**
+     * @param set
+     * @return {Vector}
+     * @private
+     */
     _setToArray( set )
     {
         let index  = -1,
@@ -518,6 +550,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param comparator
+     * @return {Vector}
+     */
     uniq( comparator )
     {
         let index = -1;
@@ -546,6 +582,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param deep
+     * @return {*}
+     */
     flatten( deep = true )
     {
         const
@@ -556,6 +596,13 @@ class Vector extends Array
         return Vector._flatten( this, deep );
     }
 
+    /**
+     * @param arr
+     * @param deep
+     * @param result
+     * @return {Vector}
+     * @private
+     */
     static _flatten( arr, deep = true, result = new Vector() )
     {
         const
@@ -583,6 +630,9 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @return {*}
+     */
     last()
     {
         const length = this.length - 1;
@@ -590,11 +640,19 @@ class Vector extends Array
         return length === -1 ? undefined : this[ length ];
     }
 
+    /**
+     * @param arrs
+     * @return {Vector}
+     */
     union( ...arrs )
     {
         return this.concat( ...arrs ).uniq();
     }
 
+    /**
+     * @param arrs
+     * @return {Vector}
+     */
     intersection( ...arrs )
     {
         arrs[ arrs.length ] = this;
@@ -619,12 +677,7 @@ class Vector extends Array
                     value       = main[ index ];
 
                 while ( ++j < childLength )
-                {
-                    if ( j !== shortest )
-                    {
-                        if ( !arrs[ j ].includes( value ) ) continue skip;
-                    }
-                }
+                    if ( j !== shortest && !arrs[ j ].includes( value ) ) continue skip;
 
                 result[ resultIndex++ ] = value;
             }
@@ -632,6 +685,10 @@ class Vector extends Array
         return result;
     }
 
+    /**
+     * @param arr
+     * @return {boolean}
+     */
     equals( arr )
     {
         const
@@ -651,6 +708,10 @@ class Vector extends Array
         return true;
     }
 
+    /**
+     * @param hint
+     * @return {*}
+     */
     [ Symbol.toPrimitive ]( hint )
     {
         if ( hint === 'number' ) return this.length;
@@ -659,6 +720,10 @@ class Vector extends Array
         return !!this.length;
     }
 
+    /**
+     * @param inPlace
+     * @return {Vector}
+     */
     compact( inPlace = false )
     {
         const
@@ -669,13 +734,17 @@ class Vector extends Array
             index       = -1;
 
         while ( ++index < length )
-            if ( !!this[ index ] ) result[ resultIndex++ ] = this[ index ];
+            if ( this[ index ] ) result[ resultIndex++ ] = this[ index ];
 
         if ( inPlace ) result.length = resultIndex;
 
         return result;
     }
 
+    /**
+     * @param arg
+     * @return {Vector}
+     */
     static from( arg )
     {
         if ( iterable( arg ) )
@@ -684,11 +753,22 @@ class Vector extends Array
             return new Vector().push( arg );
     }
 
+    /**
+     * @param arg
+     * @return {boolean}
+     */
     static array( arg )
     {
         return Array.isArray( arg );
     }
 
+    /**
+     * @param count
+     * @param min
+     * @param max
+     * @param float
+     * @return {Vector}
+     */
     static random( count, min = 0, max = 1, float = false )
     {
         const
@@ -710,6 +790,8 @@ class Vector extends Array
         return a;
     }
 
+    /**
+     */
     static override()
     {
         require( './proto' );

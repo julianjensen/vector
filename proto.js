@@ -35,7 +35,7 @@ proto.prepend = function( ...args ) {
 };
 
 Object.defineProperties( proto, {
-    last:      {
+    last: {
         get()
         {
             return this.length ? this[ this.length - 1 ] : void 0;
@@ -293,6 +293,11 @@ Array.looper = function( fn ) {
 
 proto.permutations = function permutations() {
 
+    /**
+     * @param a
+     * @return {Array<*>}
+     * @private
+     */
     function _perms( a )
     {
         let rest;
