@@ -4,7 +4,7 @@
     "description": "A much faster and versatile array class.",
     "main": "index.js",
     "scripts": {
-        "test": "istanbul cover node_modules/mocha/bin/_mocha -- ./test/",
+        "test": "istanbul cover node_modules/mocha/bin/_mocha",
         "coveralls": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
         "codacy": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage && rm -rf ./coverage"
     },
@@ -16,7 +16,6 @@
     "license": "MIT",
     "dependencies": {},
     "devDependencies": {
-        "async": "^2.5.0",
         "chai": "^4.1.0",
         "codacy-coverage": "^2.0.2",
         "coveralls": "^2.13.1",

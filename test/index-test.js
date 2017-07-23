@@ -6,9 +6,8 @@
 'use strict';
 
 const
-    Vector = require( '../' ),
-    chai = require( 'chai' ),
-    expect = chai.expect;
+    Vector = require( '../index' ),
+    expect = require( 'chai' ).expect;
 
 let vec = Vector.random( 100, 0, 10 ),
     count, flat, stillFlat, cnt;

@@ -6,10 +6,10 @@
  *********************************************************************************************************************/
 "use strict";
 
+require( '../proto' );
+
 const
-    Vector = require( '../proto' ),
-    chai = require( 'chai' ),
-    expect = chai.expect;
+    expect = require( 'chai' ).expect;
 
 let vec = Array.random( 100, 0, 10 ),
     count;
