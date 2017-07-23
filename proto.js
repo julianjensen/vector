@@ -10,13 +10,14 @@ const
     { isArray: array } = Array,
     ensureArray        = a => Array.isArray( a ) ? a : [ a ],
     noPerms            = a => !array( a ) || !a.some( el => array( el ) ),
-    concat             = ( a1, a2 ) => ensureArray( a1 ).concat( a2 );
+    concat             = ( a1, a2 ) => ensureArray( a1 ).concat( a2 ),
+    proto              = Array.prototype;
 
-Array.prototype.each = [].forEach;
-Array.prototype.all = [].every;
-Array.prototype.any = [].some;
+proto.each = [].forEach;
+proto.all = [].every;
+proto.any = [].some;
 
-Array.prototype.append = function( ...args ) {
+proto.append = function( ...args ) {
     const
         lng = args.length | 0;
 
@@ -28,12 +29,12 @@ Array.prototype.append = function( ...args ) {
     return this;
 };
 
-Array.prototype.prepend = function( ...args ) {
+proto.prepend = function( ...args ) {
     this.unshift( ...args );
     return this;
 };
 
-Object.defineProperties( Array.prototype, {
+Object.defineProperties( proto, {
     last:      {
         get()
         {
@@ -48,7 +49,7 @@ Object.defineProperties( Array.prototype, {
     }
 } );
 
-Array.prototype.clone = function() { return Array.from( this ); };
+proto.clone = function() { return Array.from( this ); };
 Array.clone = arr => Array.from( arr );
 
 Array.range = function( start, end, step = 1 ) {
@@ -71,11 +72,11 @@ Array.range = function( start, end, step = 1 ) {
 
 const toObj = ( obj, field, value ) => ( obj[ field ] = value, obj );
 
-Array.prototype.pluck = function( ...fields ) {
+proto.pluck = function( ...fields ) {
     return this.map( el => !el || typeof el !== 'object' || Array.isArray( el ) ? {} : fields.reduce( ( obj, field ) => toObj( obj, field, el[ field ] ), {} ) );
 };
 
-Array.prototype.uniq = function( comparator ) {
+proto.uniq = function( comparator ) {
     let index = -1;
 
     const
@@ -87,24 +88,23 @@ Array.prototype.uniq = function( comparator ) {
 
     let seenIndex;
 
-    outer:
-        while ( ++index < length )
-        {
-            const
-                value = this[ index ];
+    while ( ++index < length )
+    {
+        const
+            value = this[ index ];
 
-            seenIndex = result.length;
+        seenIndex = result.length;
 
-            while ( seenIndex-- )
-                if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue outer;
+        while ( seenIndex-- )
+            if ( comparator ? comparator( result[ seenIndex ], value ) : result[ seenIndex ] === value ) continue;
 
-            result[ result.length ] = value;
-        }
+        result[ result.length ] = value;
+    }
 
     return result;
 };
 
-Array.prototype.flatten = function( deep = true, result = [] ) {
+proto.flatten = function( deep = true, result = [] ) {
     const
         arr    = this,
         length = arr.length;
@@ -132,11 +132,11 @@ Array.prototype.flatten = function( deep = true, result = [] ) {
 };
 
 
-Array.prototype.union = function( ...arrs ) {
+proto.union = function( ...arrs ) {
     return this.concat( ...arrs ).uniq();
 };
 
-Array.prototype.intersection = function( ...arrs ) {
+proto.intersection = function( ...arrs ) {
 
     arrs = arrs.map( a => Array.isArray( a ) ? a : [ a ] );
     arrs[ arrs.length ] = this;
@@ -151,28 +151,27 @@ Array.prototype.intersection = function( ...arrs ) {
         result = [],
         length = main.length;
 
-    skip:
-        while ( ++index < length )
+    while ( ++index < length )
+    {
+        let j           = -1,
+            childLength = arrs.length,
+            value       = main[ index ];
+
+        while ( ++j < childLength )
         {
-            let j           = -1,
-                childLength = arrs.length,
-                value       = main[ index ];
-
-            while ( ++j < childLength )
+            if ( j !== shortest )
             {
-                if ( j !== shortest )
-                {
-                    if ( !arrs[ j ].includes( value ) ) continue skip;
-                }
+                if ( !arrs[ j ].includes( value ) ) continue;
             }
-
-            result[ resultIndex++ ] = value;
         }
+
+        result[ resultIndex++ ] = value;
+    }
 
     return result;
 };
 
-Array.prototype.equals = function( arr ) {
+proto.equals = function( arr ) {
     const
         length = this.length;
 
@@ -190,7 +189,7 @@ Array.prototype.equals = function( arr ) {
     return true;
 };
 
-Array.prototype.compact = function( falsey = true, inPlace = false ) {
+proto.compact = function( falsey = true, inPlace = false ) {
     const
         result = inPlace ? this : [],
         length = this.length;
@@ -206,11 +205,11 @@ Array.prototype.compact = function( falsey = true, inPlace = false ) {
     return result;
 };
 
-Array.prototype.drop = function( n = 1 ) {
-    return ( n >= this.length || -n >= this.length ) ? [] : n < 0 ? this.slice( 0, this.length + n ) : this.slice( n, this.length );
+proto.drop = function( n = 1 ) {
+    return n >= this.length || -n >= this.length ? [] : n < 0 ? this.slice( 0, this.length + n ) : this.slice( n, this.length );
 };
 
-Array.prototype.head = function( n = 1 ) {
+proto.head = function( n = 1 ) {
 
     n = n < 0 ? 0 : n;
 
@@ -220,7 +219,7 @@ Array.prototype.head = function( n = 1 ) {
     return this.slice( 0, n );
 };
 
-Array.prototype.tail = function( n = 1 ) {
+proto.tail = function( n = 1 ) {
     n = n < 0 ? 0 : n;
 
     if ( !n ) return [];
@@ -229,7 +228,7 @@ Array.prototype.tail = function( n = 1 ) {
     return this.slice( this.length - n );
 };
 
-Array.prototype.without = function( valOrFunc ) {
+proto.without = function( valOrFunc ) {
     return this.filter( typeof valOrFunc === 'function' ? ( val, i, arr ) => !valOrFunc( val, i, arr ) : val => val !== valOrFunc );
 };
 
@@ -269,7 +268,7 @@ Array.reducer = function( fn, initialValue ) {
     const
         hasInitial = arguments.length < 2,
         _reduction = arr => hasInitial ? arr.reduce( fn, initialValue ) : arr.reduce( fn ),
-        reduction  = arr => arr.length ? _reduction( arr ) : ( hasInitial ? initialValue : undefined );
+        reduction  = arr => arr.length ? _reduction( arr ) : hasInitial ? initialValue : undefined;
 
 
     return ( ...arrs ) => {
@@ -284,7 +283,7 @@ Array.reducer = function( fn, initialValue ) {
 
         else
             return arrs.reduce( ( res, arr ) => arr.reduce( fn, res ), reduction( arrs.shift() ) );
-    }
+    };
 };
 
 Array.strainer = function( fn ) {
@@ -295,7 +294,7 @@ Array.looper = function( fn ) {
     return ( ...arrs ) => arrs.map( ensureArray ).forEach( arr => arr.forEach( fn ) );
 };
 
-Array.prototype.permutations = function permutations() {
+proto.permutations = function permutations() {
 
     function _perms( a )
     {

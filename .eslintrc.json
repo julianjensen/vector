@@ -175,7 +175,7 @@
         "no-octal": 2,
         "no-octal-escape": 2,
         "no-path-concat": 2,
-        "no-proto": 2,
+        "no-proto": "off",
         "no-redeclare": 2,
         "no-regex-spaces": 2,
         "no-return-assign": "off",
@@ -190,7 +190,7 @@
         "no-undef": 2,
         "no-undef-init": 2,
         "no-unexpected-multiline": 2,
-        "no-unmodified-loop-condition": 2,
+        "no-unmodified-loop-condition": "off",
         "no-unneeded-ternary": [
             2,
             {

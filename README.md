@@ -3,7 +3,12 @@ Vector
 
 This is not yet ready for primetime, just for personal use.
 
-[![Coveralls Status][coveralls-image]][coveralls-url] [![Build Status][travis-image]][travis-url]  [![Dependency Status][depstat-image]][depstat-url] [![npm version][npm-image]][npm-url] [![License][license-image]][license-url] [![Known Vulnerabilities][snyk-image]][snyk-url]
+[![Coveralls Status][coveralls-image]][coveralls-url] 
+[![Build Status][travis-image]][travis-url]  
+[![Dependency Status][depstat-image]][depstat-url] 
+[![npm version][npm-image]][npm-url] 
+[![License][license-image]][license-url] 
+[![Known Vulnerabilities][snyk-image]][snyk-url]
 [![david-dm][david-dm-image]][david-dm-url]
 [![bitHound Code][bithound-image]][bithound-url]
 [![Code Climate][codeclimate-image]][codeclimate-url]
