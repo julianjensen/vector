@@ -99,13 +99,41 @@ describe( 'Vector', function() {
 
     it( 'should create a unique vector', function() {
         expect( vec.uniq() ).to.have.length( 11 );
+        expect( vec.uniq( ( a, b ) => a === b ) ).to.have.length( 11 );
+        expect( new Vector().flatten() ).to.eql( [] );
     } );
 
     it( 'should reduce a vector', function() {
         let sum = 0,
-            recd = vec.reduce( ( acc, val ) => acc + val, 0 );
+            sum1 = 0,
+            alt = 0,
+            recd = vec.reduce( ( acc, val ) => acc + val, 0 ),
+            ctx = { mult: 2 };
 
         vec.each( val => sum += val );
+        new Vector( [ 1, 2, 3 ] ).each( function( val ) { sum1 += val * this.mult; }, ctx );
+
+        expect( sum1 ).to.equal( 12 );
+
+        sum1 = 0;
+
+        const na = Vector.each( function( val ) { sum1 += val; } );
+
+        na( 1 );
+
+        expect( sum1 ).to.equal( 1 );
+
+        const summer = Vector.each( val => alt += val );
+
+        summer( vec );
+
+        expect( alt ).to.equal( sum );
+
+        alt = 0;
+
+        summer( new Set( [ 1, 2, 3 ] ) );
+
+        expect( alt ).to.equal( 6 );
 
         expect( sum ).to.equal( recd );
     } );
@@ -205,5 +233,24 @@ describe( 'Vector', function() {
 
         Vector.override();
         expect( typeof [].uniq ).to.eql( 'function' );
+
+        expect( new Vector( 1, 2, 3 ).some( v => v === 10 ) ).to.be.false;
+
+        const v = new Vector( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 );
+
+        expect( v.slice() ).to.eql( [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] );
+        expect( v.slice( 8 ) ).to.eql( [ 9, 10 ] );
+        expect( v.slice( 1, 3 ) ).to.eql( [ 2, 3 ] );
+        expect( new Vector().slice() ).to.eql( [] );
+        expect( v.slice( 7, -1 ) ).to.eql( [ 8, 9 ] );
+        expect( v.slice( -3, -1 ) ).to.eql( [ 8, 9 ] );
+        expect( new Vector( 4 ).fill( 10 ) ).to.eql( [ 10, 10, 10, 10 ] );
+        expect( new Vector( 4 ).fill( 10, undefined, undefined, 1 ) ).to.eql( [ 10, 11, 12, 13 ] );
+
+        expect( v.includes( 5 ) ).to.be.true;
+        expect( v.includes( 15 ) ).to.be.false;
+        expect( v.includes( [ 5, 15 ] ) ).to.be.true;
+        expect( v.includes( [ 15, 16 ] ) ).to.be.false;
+
     } );
 } );

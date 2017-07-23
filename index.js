@@ -132,7 +132,7 @@ class Vector extends Array
             arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Array.from( arr ) : [ arr ];
 
             const
-                length = arr ? arr.length : 0;
+                length = arr.length;
 
             let index = -1;
 
@@ -473,7 +473,7 @@ class Vector extends Array
         {
             const _includes = this.includes.bind( this );
 
-            return this.some( _includes );
+            return value.some( _includes );
         }
 
         return this.indexOf( value ) !== -1;
@@ -589,11 +589,6 @@ class Vector extends Array
      */
     flatten( deep = true )
     {
-        const
-            length = this.length;
-
-        if ( !length ) return new Vector();
-
         return Vector._flatten( this, deep );
     }
 
