@@ -31,3 +31,4 @@ This is not yet ready for primetime, just for personal use.
 [license-image]: https://img.shields.io/badge/license-MIT-brightgreen.svg
 [license-url]: https://github.com/julianjensen/vector/blob/master/LICENSE
 [depstat-url]: https://gemnasium.com/github.com/julianjensen/vector
+

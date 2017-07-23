@@ -6,7 +6,7 @@
  * @author Julian Jensen <jjdanois@gmail.com> on 27-AUG-2016
  * @version 0.7.1
  *******************************************************************************************************/
-'use strict';
+"use strict";
 
 /**
  * @param subject
@@ -64,6 +64,7 @@ function indexOf( subject, target, fromIndex )
 
 const
     iterable         = a => !!a && typeof a[ Symbol.iterator ] === 'function',
+    fixArray        = arr => arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector(),
     LARGE_ARRAY_SIZE = 200;
 
 /** */
@@ -169,7 +170,7 @@ class Vector extends Array
     static map( fn )
     {
         return function( arr ) {
-            arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
+            arr = fixArray( arr ); // arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
 
             const
                 length = arr.length,
@@ -219,7 +220,7 @@ class Vector extends Array
     static reduce( fn )
     {
         return function( arr, initialValue ) {
-            arr = arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
+            arr = fixArray( arr ); // arr instanceof Vector || Array.isArray( arr ) ? arr : iterable( arr ) ? Vector.from( arr ) : arr !== undefined ? new Vector().push( arr ) : new Vector();
 
             const
                 length = arr.length;
